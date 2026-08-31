@@ -9,7 +9,8 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.view.View
+import android.view.ViewGroup
+import android.webkit.CookieManager
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -64,11 +65,11 @@ fun YouTubeWebScreen() {
             FloatingActionButton(onClick = {
                 coroutineScope.launch {
                     Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
-                    val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.0.3")
+                    val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.0.4")
                     if (apkUrl != null) {
                         downloadAndInstallApk(context, apkUrl)
                     } else {
-                        Toast.makeText(context, "当前已是最新版本 v2.0.3", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "当前已是最新版本 v2.0.4", Toast.LENGTH_SHORT).show()
                     }
                 }
             }) {
@@ -80,21 +81,31 @@ fun YouTubeWebScreen() {
             modifier = Modifier.fillMaxSize(),
             factory = { ctx ->
                 WebView(ctx).apply {
+                    layoutParams = ViewGroup.LayoutParams(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT
+                    )
                     webViewRef = this
-                    settings.javaScriptEnabled = true
-                    settings.domStorageEnabled = true
-                    settings.mediaPlaybackRequiresUserGesture = false
-                    settings.loadsImagesAutomatically = true
-                    settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                     
-                    // 移除会导致手机版网页布局崩溃的 useWideViewPort 和 loadWithOverviewMode
-                    
-                    // 伪装成普通手机版 Chrome，防止 YouTube 刻意对 WebView 下发残缺版网页
-                    val defaultUserAgent = settings.userAgentString
-                    settings.userAgentString = defaultUserAgent.replace("; wv", "")
+                    // 开启所有必要的 Web 权限和设置以确保视频播放器正常加载
+                    settings.apply {
+                        javaScriptEnabled = true
+                        domStorageEnabled = true
+                        databaseEnabled = true
+                        mediaPlaybackRequiresUserGesture = false
+                        loadsImagesAutomatically = true
+                        mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                        
+                        // 使用一个干净的移动端 Chrome UA，彻底避开 YouTube 对 WebView 的歧视
+                        userAgentString = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+                    }
+
+                    // 开启 Cookie 支持，YouTube 严重依赖它来加载播放器组件
+                    val cookieManager = CookieManager.getInstance()
+                    cookieManager.setAcceptCookie(true)
+                    cookieManager.setAcceptThirdPartyCookies(this, true)
 
                     webViewClient = object : WebViewClient() {
-                        
                         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                             val url = request?.url?.toString() ?: return false
                             if (url.startsWith("intent://") || url.startsWith("vnd.youtube") || url.startsWith("android-app://")) {
@@ -111,22 +122,53 @@ fun YouTubeWebScreen() {
                         override fun onPageFinished(view: WebView?, url: String?) {
                             super.onPageFinished(view, url)
                             
-                            // 移除所有强制隐藏 CSS (防止误杀视频播放器)，只保留隐藏 App 下载横幅
-                            // 改为单纯依赖 JS 自动点击跳过
                             val js = """
+                                // 1. 注入 CSS 修复布局并隐藏无关广告
+                                var style = document.createElement('style');
+                                style.innerHTML = `
+                                    /* 强制播放器区域拥有正常高度，防止被压缩 */
+                                    #player-control-container, #player-container-id, ytm-custom-control {
+                                        min-height: 220px !important;
+                                        display: block !important;
+                                        visibility: visible !important;
+                                    }
+                                    
+                                    /* 隐藏各类促销横幅 */
+                                    ytm-promoted-video-renderer,
+                                    ytm-companion-ad-renderer,
+                                    ytm-app-promo-renderer,
+                                    ytm-mealbar-promo-renderer,
+                                    ytm-bottom-sheet-promo-renderer {
+                                        display: none !important;
+                                    }
+                                `;
+                                document.head.appendChild(style);
+
+                                // 2. 轮询处理广告和干扰按钮
                                 setInterval(function() {
-                                    // 点击跳过按钮
+                                    // 点击跳过视频广告
                                     var skipBtn = document.querySelector('.ytp-ad-skip-button, .ytp-ad-skip-button-modern, .ytp-skip-ad-button');
-                                    if (skipBtn) { skipBtn.click(); }
+                                    if (skipBtn) skipBtn.click();
                                     
                                     // 关闭叠加广告
                                     var closeBtn = document.querySelector('.ytp-ad-overlay-close-button');
-                                    if (closeBtn) { closeBtn.click(); }
+                                    if (closeBtn) closeBtn.click();
                                     
-                                    // 隐藏 Open App 横幅
-                                    var appPromo = document.querySelector('ytm-app-promo-renderer, ytm-mealbar-promo-renderer');
-                                    if (appPromo) { appPromo.style.display = 'none'; }
-                                }, 500);
+                                    // 快进不可跳过的广告
+                                    var adVid = document.querySelector('.ad-showing video, .html5-video-player.ad-showing video');
+                                    if (adVid && !isNaN(adVid.duration)) {
+                                        adVid.playbackRate = 16.0;
+                                        adVid.currentTime = adVid.duration - 0.1;
+                                    }
+                                    
+                                    // 隐藏顶部的 Open App 按钮
+                                    var openAppBtns = document.querySelectorAll('a, button');
+                                    openAppBtns.forEach(function(btn) {
+                                        if (btn.textContent && (btn.textContent.trim().toLowerCase() === 'open app' || btn.textContent.trim() === '打开App')) {
+                                            btn.style.display = 'none';
+                                        }
+                                    });
+                                }, 300);
                             """.trimIndent()
                             view?.evaluateJavascript(js, null)
                         }
@@ -147,28 +189,7 @@ fun YouTubeWebScreen() {
                         }
                     }
                     
-                    webChromeClient = object : WebChromeClient() {
-                        // 支持全屏播放相关的回调
-                        private var customView: View? = null
-                        private var customViewCallback: CustomViewCallback? = null
-
-                        override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
-                            if (customView != null) {
-                                callback?.onCustomViewHidden()
-                                return
-                            }
-                            customView = view
-                            customViewCallback = callback
-                            // 实际项目中这里会将 view 添加到 Activity 的根布局以全屏显示
-                        }
-
-                        override fun onHideCustomView() {
-                            super.onHideCustomView()
-                            customView = null
-                            customViewCallback?.onCustomViewHidden()
-                        }
-                    }
-                    
+                    webChromeClient = WebChromeClient()
                     loadUrl("https://m.youtube.com")
                 }
             }
