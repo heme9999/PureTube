@@ -1,5 +1,11 @@
 package com.example.puretube
 
+import android.app.DownloadManager
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.IntentFilter
+import android.os.Environment
+import androidx.core.content.ContextCompat
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -114,10 +120,9 @@ fun PureTubeApp() {
                         Button(onClick = {
                             coroutineScope.launch {
                                 Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
-                                val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v1.0.0")
+                                val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v1.0.2")
                                 if (apkUrl != null) {
-                                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl))
-                                    context.startActivity(intent)
+                                    downloadAndInstallApk(context, apkUrl)
                                 } else {
                                     Toast.makeText(context, "当前已是最新版本，或未发布 Release", Toast.LENGTH_LONG).show()
                                 }
@@ -144,6 +149,8 @@ fun PureTubeApp() {
                                 Button(onClick = { apiUrl = "https://pipedapi.tokhmi.xyz/" }) { Text("节点 1") }
                                 Spacer(modifier = Modifier.width(8.dp))
                                 Button(onClick = { apiUrl = "https://pipedapi.smnz.de/" }) { Text("节点 2") }
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Button(onClick = { apiUrl = "https://pipedapi.kavin.rocks/" }) { Text("节点 3") }
                             }
                             Button(onClick = { loadVideos(); showSettings = false }, modifier = Modifier.padding(top = 8.dp)) {
                                 Text("保存并重试")
@@ -220,5 +227,48 @@ fun VideoItem(video: TrendingResponse, onClick: () -> Unit) {
             Text(text = video.title, modifier = Modifier.padding(8.dp), style = MaterialTheme.typography.titleMedium)
             Text(text = video.uploaderName, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.bodyMedium)
         }
+    }
+}
+
+fun downloadAndInstallApk(context: Context, url: String) {
+    try {
+        val request = DownloadManager.Request(Uri.parse(url))
+            .setTitle("PureTube 更新")
+            .setDescription("正在下载新版本...")
+            .setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+            .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "PureTube_update.apk")
+
+        val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        val downloadId = downloadManager.enqueue(request)
+
+        Toast.makeText(context, "开始后台下载更新，下载完成后将自动提示安装", Toast.LENGTH_LONG).show()
+
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(ctx: Context, intent: Intent) {
+                val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+                if (id == downloadId) {
+                    val uri = downloadManager.getUriForDownloadedFile(downloadId)
+                    val installIntent = Intent(Intent.ACTION_VIEW).apply {
+                        setDataAndType(uri, "application/vnd.android.package-archive")
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    }
+                    try {
+                        ctx.startActivity(installIntent)
+                    } catch (e: Exception) {
+                        Toast.makeText(ctx, "打开安装包失败，请到系统的'下载'目录手动点击安装", Toast.LENGTH_LONG).show()
+                    }
+                    try {
+                        ctx.unregisterReceiver(this)
+                    } catch (e: Exception) {}
+                }
+            }
+        }
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            context.registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE), Context.RECEIVER_EXPORTED)
+        } else {
+            context.registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+        }
+    } catch (e: Exception) {
+        Toast.makeText(context, "启动下载失败: ${e.message}", Toast.LENGTH_SHORT).show()
     }
 }
