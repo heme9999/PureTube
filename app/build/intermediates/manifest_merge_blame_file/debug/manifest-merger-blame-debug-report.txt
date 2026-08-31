@@ -2,7 +2,7 @@
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.example.puretube"
 4    android:versionCode="1"
-5    android:versionName="2.3.0" >
+5    android:versionName="2.3.2" >
 6
 7    <uses-sdk
 8        android:minSdkVersion="24"
@@ -30,7 +30,7 @@
 19-->[androidx.core:core:1.12.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/896a60156f8ecaa22f625913c693b84f/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
 20
 21    <application
-21-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:5-13:236
+21-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:5-13:276
 22        android:name="com.example.puretube.PureTubeApp"
 22-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:198-225
 23        android:allowBackup="true"
@@ -52,36 +52,36 @@
 32            android:name="com.example.puretube.MainActivity"
 32-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:19-47
 33            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
-33-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:183-268
+33-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:143-228
 34            android:exported="true"
 34-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:48-71
 35            android:hardwareAccelerated="true"
-35-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:269-303
+35-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:229-263
 36            android:label="@string/app_name"
 36-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:72-104
-37            android:supportsPictureInPicture="true"
-37-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:143-182
-38            android:theme="@style/Theme.PureTube" >
-38-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:105-142
-39            <intent-filter>
-39-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:8:13-11:29
-40                <action android:name="android.intent.action.MAIN" />
-40-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:9:17-69
-40-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:9:25-66
-41
-42                <category android:name="android.intent.category.LAUNCHER" />
-42-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:17-77
-42-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:27-74
-43            </intent-filter>
-44        </activity>
-45        <activity
-45-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:5-222
-46            android:name="com.example.puretube.NativePlayerActivity"
-46-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:15-51
-47            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-47-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:52-126
-48            android:screenOrientation="sensorLandscape"
-48-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:127-170
+37            android:theme="@style/Theme.PureTube" >
+37-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:105-142
+38            <intent-filter>
+38-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:8:13-11:29
+39                <action android:name="android.intent.action.MAIN" />
+39-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:9:17-69
+39-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:9:25-66
+40
+41                <category android:name="android.intent.category.LAUNCHER" />
+41-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:17-77
+41-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:27-74
+42            </intent-filter>
+43        </activity>
+44        <activity
+44-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:5-262
+45            android:name="com.example.puretube.NativePlayerActivity"
+45-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:15-51
+46            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+46-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:52-126
+47            android:screenOrientation="sensorLandscape"
+47-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:127-170
+48            android:supportsPictureInPicture="true"
+48-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:220-259
 49            android:theme="@style/Theme.PureTube.Fullscreen" />
 49-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:171-219
 50

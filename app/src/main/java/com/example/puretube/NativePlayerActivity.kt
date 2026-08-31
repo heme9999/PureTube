@@ -1,6 +1,10 @@
 package com.example.puretube
 
+import android.app.PictureInPictureParams
+import android.content.res.Configuration
+import android.os.Build
 import android.os.Bundle
+import android.util.Rational
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -21,6 +25,7 @@ import org.schabi.newpipe.extractor.ServiceList
 
 class NativePlayerActivity : ComponentActivity() {
     private var exoPlayer: ExoPlayer? = null
+    private var playerView: PlayerView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,6 +64,7 @@ class NativePlayerActivity : ComponentActivity() {
                         AndroidView(
                             factory = { ctx ->
                                 PlayerView(ctx).apply {
+                                    playerView = this
                                     val trackSelector = DefaultTrackSelector(ctx)
                                     exoPlayer = ExoPlayer.Builder(ctx).setTrackSelector(trackSelector).build().also { player ->
                                         this.player = player
@@ -75,6 +81,25 @@ class NativePlayerActivity : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
+                val params = PictureInPictureParams.Builder()
+                    .setAspectRatio(Rational(16, 9))
+                    .build()
+                enterPictureInPictureMode(params)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
+        super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        playerView?.useController = !isInPictureInPictureMode
     }
 
     override fun onDestroy() {
