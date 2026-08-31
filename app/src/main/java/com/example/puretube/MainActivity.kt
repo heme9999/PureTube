@@ -114,7 +114,7 @@ fun PureTubeApp() {
                         Button(onClick = {
                             coroutineScope.launch {
                                 Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
-                                val apkUrl = GitHubUpdater.checkForUpdates("YOUR_GITHUB_USERNAME", "PureTube", "v1.0.0")
+                                val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v1.0.0")
                                 if (apkUrl != null) {
                                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(apkUrl))
                                     context.startActivity(intent)
