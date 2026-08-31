@@ -31,7 +31,7 @@ interface PipedApiService {
 }
 
 object PipedApiClient {
-    private const val BASE_URL = "https://pipedapi.kavin.rocks/"
+    private const val BASE_URL = "https://pipedapi.tokhmi.xyz/"
 
     private val json = Json { ignoreUnknownKeys = true }
 
