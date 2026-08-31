@@ -247,6 +247,7 @@ int drawable notification_template_icon_bg 0x7f05005f
 int drawable notification_template_icon_low_bg 0x7f050060
 int drawable notification_tile_bg 0x7f050061
 int drawable notify_panel_notification_icon_bg 0x7f050062
+int drawable tv_banner 0x7f050063
 int font roboto_medium_numbers 0x7f060000
 int id accessibility_action_clickable_span 0x7f070000
 int id accessibility_custom_action_0 0x7f070001

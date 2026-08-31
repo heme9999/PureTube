@@ -1,5 +1,9 @@
 [
     {
+        "merged": "com.example.puretube.app-merged_res-46:/drawable_tv_banner.xml.flat",
+        "source": "com.example.puretube.app-main-48:/drawable/tv_banner.xml"
+    },
+    {
         "merged": "/Users/hemrmicloud.com/.gradle/daemon/8.7/com.example.puretube.app-merged_res-46:/layout_custom_player_view.xml.flat",
         "source": "/Users/hemrmicloud.com/.gradle/daemon/8.7/com.example.puretube.app-main-48:/layout/custom_player_view.xml"
     }

@@ -98,6 +98,11 @@ class MainActivity : ComponentActivity() {
                             factory = { ctx ->
                                 WebView(ctx).apply {
                                     myWebView = this
+
+                                    isFocusable = true
+                                    isFocusableInTouchMode = true
+                                    requestFocus()
+
                                     layoutParams = ViewGroup.LayoutParams(
                                         ViewGroup.LayoutParams.MATCH_PARENT,
                                         ViewGroup.LayoutParams.MATCH_PARENT
@@ -155,6 +160,20 @@ class MainActivity : ComponentActivity() {
                                                     ytm-bottom-sheet-promo-renderer { display: none !important; }
                                                 `;
                                                 document.head.appendChild(style);
+
+                                                var tvFocusStyle = document.createElement('style');
+                                                tvFocusStyle.innerHTML = `
+                                                    *:focus, a:focus, button:focus, [role="button"]:focus {
+                                                        outline: 6px solid #00E5FF !important;
+                                                        outline-offset: -2px !important;
+                                                        box-shadow: 0 0 20px #00E5FF, inset 0 0 15px #00E5FF !important;
+                                                        background-color: rgba(0, 229, 255, 0.2) !important;
+                                                        border-radius: 8px !important;
+                                                        z-index: 9999 !important;
+                                                    }
+                                                `;
+                                                document.head.appendChild(tvFocusStyle);
+
 
                                                 setInterval(function() {
                                                     var skipBtn = document.querySelector('.ytp-ad-skip-button, .ytp-ad-skip-button-modern, .ytp-skip-ad-button');

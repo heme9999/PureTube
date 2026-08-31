@@ -80,14 +80,26 @@ uses-permission#android.permission.INTERNET
 ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:3:5-67
 	android:name
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:3:22-64
+uses-feature#android.software.leanback
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:5-87
+	android:required
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:60-84
+	android:name
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:19-59
+uses-feature#android.hardware.touchscreen
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:87-172
+	android:required
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:145-169
+	android:name
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:101-144
 uses-permission#android.permission.ACCESS_NETWORK_STATE
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:5-79
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:172-246
 MERGED from [androidx.media3:media3-common:1.2.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/b1f29d6aeaf166bf4627177aba45bae0/transformed/media3-common-1.2.0/AndroidManifest.xml:22:5-79
 MERGED from [androidx.media3:media3-common:1.2.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/b1f29d6aeaf166bf4627177aba45bae0/transformed/media3-common-1.2.0/AndroidManifest.xml:22:5-79
 MERGED from [androidx.media3:media3-exoplayer:1.2.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/64495026f258cc0e5d8e143d021e9080/transformed/media3-exoplayer-1.2.0/AndroidManifest.xml:22:5-79
 MERGED from [androidx.media3:media3-exoplayer:1.2.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/64495026f258cc0e5d8e143d021e9080/transformed/media3-exoplayer-1.2.0/AndroidManifest.xml:22:5-79
 	android:name
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:22-76
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:189-243
 uses-permission#android.permission.REQUEST_INSTALL_PACKAGES
 ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:5:5-83
 	android:name
@@ -119,8 +131,12 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/hemrmicloud.com/.gra
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:179-197
 	android:allowBackup
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:18-44
+	android:banner
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:226-262
 	android:theme
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:105-142
+	android:isGame
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:263-285
 	android:usesCleartextTraffic
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:143-178
 	android:name
@@ -139,8 +155,8 @@ ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/An
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:105-142
 	android:name
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:19-47
-intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:8:13-11:29
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER+category:name:android.intent.category.LEANBACK_LAUNCHER
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:8:13-11:98
 action#android.intent.action.MAIN
 ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:9:17-69
 	android:name
@@ -149,6 +165,10 @@ category#android.intent.category.LAUNCHER
 ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:17-77
 	android:name
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:27-74
+category#android.intent.category.LEANBACK_LAUNCHER
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:11:13-82
+	android:name
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:11:23-79
 activity#com.example.puretube.NativePlayerActivity
 ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:5-320
 	android:screenOrientation
