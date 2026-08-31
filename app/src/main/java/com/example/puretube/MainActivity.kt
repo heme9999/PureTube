@@ -27,6 +27,8 @@ import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFact
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import java.util.concurrent.TimeUnit
 import retrofit2.Retrofit
 
 class MainActivity : ComponentActivity() {
@@ -62,8 +64,13 @@ fun PureTubeApp() {
             errorMessage = null
             try {
                 val json = Json { ignoreUnknownKeys = true; coerceInputValues = true }
+                val client = OkHttpClient.Builder()
+                    .connectTimeout(30, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .build()
                 val retrofit = Retrofit.Builder()
                     .baseUrl(apiUrl)
+                    .client(client)
                     .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
                     .build()
                 val api = retrofit.create(PipedApiService::class.java)
