@@ -109,7 +109,7 @@ fun PureTubeApp() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("PureTube") },
+                    title = { Text("PureTube v1.0.3") },
                     actions = {
                         IconButton(onClick = { loadVideos() }) {
                             Icon(Icons.Filled.Refresh, contentDescription = "刷新")
@@ -120,7 +120,7 @@ fun PureTubeApp() {
                         Button(onClick = {
                             coroutineScope.launch {
                                 Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
-                                val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v1.0.2")
+                                val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v1.0.3")
                                 if (apkUrl != null) {
                                     downloadAndInstallApk(context, apkUrl)
                                 } else {
