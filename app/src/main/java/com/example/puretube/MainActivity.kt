@@ -9,6 +9,7 @@ import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
+import android.view.View
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
@@ -50,7 +51,6 @@ fun YouTubeWebScreen() {
     val coroutineScope = rememberCoroutineScope()
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
 
-    // 拦截系统返回键，如果网页可以后退，则网页后退，否则退出APP
     BackHandler {
         if (webViewRef?.canGoBack() == true) {
             webViewRef?.goBack()
@@ -64,11 +64,11 @@ fun YouTubeWebScreen() {
             FloatingActionButton(onClick = {
                 coroutineScope.launch {
                     Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
-                    val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.0.2")
+                    val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.0.3")
                     if (apkUrl != null) {
                         downloadAndInstallApk(context, apkUrl)
                     } else {
-                        Toast.makeText(context, "当前已是最新版本 v2.0.2", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "当前已是最新版本 v2.0.3", Toast.LENGTH_SHORT).show()
                     }
                 }
             }) {
@@ -87,24 +87,23 @@ fun YouTubeWebScreen() {
                     settings.loadsImagesAutomatically = true
                     settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                     
-                    settings.useWideViewPort = true
-                    settings.loadWithOverviewMode = true
+                    // 移除会导致手机版网页布局崩溃的 useWideViewPort 和 loadWithOverviewMode
+                    
+                    // 伪装成普通手机版 Chrome，防止 YouTube 刻意对 WebView 下发残缺版网页
+                    val defaultUserAgent = settings.userAgentString
+                    settings.userAgentString = defaultUserAgent.replace("; wv", "")
 
                     webViewClient = object : WebViewClient() {
                         
-                        // 拦截跳转意图 (比如点击了 Open App 按钮)
                         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                             val url = request?.url?.toString() ?: return false
-                            // 如果是 intent 协议或者拉起原生 App 的链接，拦截掉！
                             if (url.startsWith("intent://") || url.startsWith("vnd.youtube") || url.startsWith("android-app://")) {
                                 try {
                                     val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
                                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                                     context.startActivity(intent)
-                                } catch (e: Exception) {
-                                    // 用户没装原版APP，就什么也不做，防止出现错误页面
-                                }
-                                return true // 我们处理了，WebView不要去加载这个错误的URL
+                                } catch (e: Exception) { }
+                                return true
                             }
                             return super.shouldOverrideUrlLoading(view, request)
                         }
@@ -112,28 +111,11 @@ fun YouTubeWebScreen() {
                         override fun onPageFinished(view: WebView?, url: String?) {
                             super.onPageFinished(view, url)
                             
-                            // 1. 注入 CSS：去除了 .ad-showing，防止误伤整个视频播放器！
-                            // 并加入了 ytm-app-promo-renderer 隐藏 "OPEN APP" 按钮
-                            val css = """
-                                var style = document.createElement('style');
-                                style.innerHTML = `
-                                    ad-slot-renderer, 
-                                    ytm-promoted-video-renderer, 
-                                    ytm-companion-ad-renderer,
-                                    ytm-unlimited-promo-renderer,
-                                    ytm-mealbar-promo-renderer,
-                                    ytm-app-promo-renderer {
-                                        display: none !important;
-                                    }
-                                `;
-                                document.head.appendChild(style);
-                            """.trimIndent()
-                            view?.evaluateJavascript(css, null)
-
-                            // 2. 注入 JS：0.3秒检测一次，自动点击跳过、静音并加速播放不可跳过的广告
+                            // 移除所有强制隐藏 CSS (防止误杀视频播放器)，只保留隐藏 App 下载横幅
+                            // 改为单纯依赖 JS 自动点击跳过
                             val js = """
                                 setInterval(function() {
-                                    // 自动点击跳过按钮
+                                    // 点击跳过按钮
                                     var skipBtn = document.querySelector('.ytp-ad-skip-button, .ytp-ad-skip-button-modern, .ytp-skip-ad-button');
                                     if (skipBtn) { skipBtn.click(); }
                                     
@@ -141,17 +123,10 @@ fun YouTubeWebScreen() {
                                     var closeBtn = document.querySelector('.ytp-ad-overlay-close-button');
                                     if (closeBtn) { closeBtn.click(); }
                                     
-                                    // 如果有不可跳过的视频广告，快进到底
-                                    var adVideo = document.querySelector('.ad-showing video, .html5-video-player.ad-showing video');
-                                    if (adVideo && !isNaN(adVideo.duration)) {
-                                        adVideo.playbackRate = 16.0;
-                                        adVideo.currentTime = adVideo.duration - 0.1;
-                                    }
-                                    
-                                    // 额外：隐藏 "Open App" 浮层
-                                    var openAppBanner = document.querySelector('ytm-app-promo-renderer');
-                                    if(openAppBanner) openAppBanner.remove();
-                                }, 300);
+                                    // 隐藏 Open App 横幅
+                                    var appPromo = document.querySelector('ytm-app-promo-renderer, ytm-mealbar-promo-renderer');
+                                    if (appPromo) { appPromo.style.display = 'none'; }
+                                }, 500);
                             """.trimIndent()
                             view?.evaluateJavascript(js, null)
                         }
@@ -163,7 +138,6 @@ fun YouTubeWebScreen() {
                                 "pagead2.googlesyndication.com", 
                                 "pubads.g.doubleclick.net", 
                                 "youtube.com/api/stats/ads",
-                                "youtube.com/ptracking",
                                 "doubleclick.net"
                             )
                             if (adHosts.any { url.contains(it) }) {
@@ -172,7 +146,29 @@ fun YouTubeWebScreen() {
                             return super.shouldInterceptRequest(view, request)
                         }
                     }
-                    webChromeClient = WebChromeClient()
+                    
+                    webChromeClient = object : WebChromeClient() {
+                        // 支持全屏播放相关的回调
+                        private var customView: View? = null
+                        private var customViewCallback: CustomViewCallback? = null
+
+                        override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+                            if (customView != null) {
+                                callback?.onCustomViewHidden()
+                                return
+                            }
+                            customView = view
+                            customViewCallback = callback
+                            // 实际项目中这里会将 view 添加到 Activity 的根布局以全屏显示
+                        }
+
+                        override fun onHideCustomView() {
+                            super.onHideCustomView()
+                            customView = null
+                            customViewCallback?.onCustomViewHidden()
+                        }
+                    }
+                    
                     loadUrl("https://m.youtube.com")
                 }
             }
