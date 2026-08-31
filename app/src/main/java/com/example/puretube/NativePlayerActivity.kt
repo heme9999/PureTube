@@ -12,12 +12,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.PlayerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.schabi.newpipe.extractor.ServiceList
-import org.schabi.newpipe.extractor.services.youtube.extractors.YoutubeStreamExtractor
 
 class NativePlayerActivity : ComponentActivity() {
     private var exoPlayer: ExoPlayer? = null
@@ -43,7 +43,6 @@ class NativePlayerActivity : ComponentActivity() {
                                     }
                                     val videoStreams = extractor.videoStreams
                                     if (videoStreams.isNotEmpty()) {
-                                        // 简单取第一个视频流
                                         streamUrl = videoStreams[0].content
                                     } else {
                                         Toast.makeText(this@NativePlayerActivity, "无法获取视频流", Toast.LENGTH_SHORT).show()
@@ -60,7 +59,8 @@ class NativePlayerActivity : ComponentActivity() {
                         AndroidView(
                             factory = { ctx ->
                                 PlayerView(ctx).apply {
-                                    exoPlayer = ExoPlayer.Builder(ctx).build().also { player ->
+                                    val trackSelector = DefaultTrackSelector(ctx)
+                                    exoPlayer = ExoPlayer.Builder(ctx).setTrackSelector(trackSelector).build().also { player ->
                                         this.player = player
                                         val mediaItem = MediaItem.fromUri(streamUrl!!)
                                         player.setMediaItem(mediaItem)

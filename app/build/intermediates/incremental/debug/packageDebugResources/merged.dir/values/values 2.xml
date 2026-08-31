@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">PureTube</string>
-    <style name="Theme.PureTube" parent="android:Theme.Material.Light.NoActionBar"/>
-</resources>
