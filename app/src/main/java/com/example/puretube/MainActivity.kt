@@ -61,7 +61,7 @@ fun PureTubeApp() {
     var isLoading by remember { mutableStateOf(false) }
     var errorMessage by remember { mutableStateOf<String?>(null) }
     
-    var apiUrl by remember { mutableStateOf("https://pipedapi.tokhmi.xyz/") }
+    var apiUrl by remember { mutableStateOf("https://api.piped.private.coffee/") }
     var showSettings by remember { mutableStateOf(false) }
 
     fun loadVideos() {
@@ -109,7 +109,7 @@ fun PureTubeApp() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("PureTube v1.0.3") },
+                    title = { Text("PureTube v1.0.4") },
                     actions = {
                         IconButton(onClick = { loadVideos() }) {
                             Icon(Icons.Filled.Refresh, contentDescription = "刷新")
@@ -120,7 +120,7 @@ fun PureTubeApp() {
                         Button(onClick = {
                             coroutineScope.launch {
                                 Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
-                                val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v1.0.3")
+                                val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v1.0.4")
                                 if (apkUrl != null) {
                                     downloadAndInstallApk(context, apkUrl)
                                 } else {
