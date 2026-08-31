@@ -17,6 +17,7 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -49,16 +50,25 @@ fun YouTubeWebScreen() {
     val coroutineScope = rememberCoroutineScope()
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
 
+    // 拦截系统返回键，如果网页可以后退，则网页后退，否则退出APP
+    BackHandler {
+        if (webViewRef?.canGoBack() == true) {
+            webViewRef?.goBack()
+        } else {
+            (context as? ComponentActivity)?.finish()
+        }
+    }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
                 coroutineScope.launch {
                     Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
-                    val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.0.1")
+                    val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.0.2")
                     if (apkUrl != null) {
                         downloadAndInstallApk(context, apkUrl)
                     } else {
-                        Toast.makeText(context, "当前已是最新版本 v2.0.1", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "当前已是最新版本 v2.0.2", Toast.LENGTH_SHORT).show()
                     }
                 }
             }) {
@@ -67,7 +77,7 @@ fun YouTubeWebScreen() {
         }
     ) { paddingValues ->
         AndroidView(
-            modifier = Modifier.fillMaxSize(), // 全屏，不使用 paddingValues 限制顶部
+            modifier = Modifier.fillMaxSize(),
             factory = { ctx ->
                 WebView(ctx).apply {
                     webViewRef = this
@@ -77,15 +87,33 @@ fun YouTubeWebScreen() {
                     settings.loadsImagesAutomatically = true
                     settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
                     
-                    // 开启自适应屏幕
                     settings.useWideViewPort = true
                     settings.loadWithOverviewMode = true
 
                     webViewClient = object : WebViewClient() {
+                        
+                        // 拦截跳转意图 (比如点击了 Open App 按钮)
+                        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                            val url = request?.url?.toString() ?: return false
+                            // 如果是 intent 协议或者拉起原生 App 的链接，拦截掉！
+                            if (url.startsWith("intent://") || url.startsWith("vnd.youtube") || url.startsWith("android-app://")) {
+                                try {
+                                    val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
+                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                    context.startActivity(intent)
+                                } catch (e: Exception) {
+                                    // 用户没装原版APP，就什么也不做，防止出现错误页面
+                                }
+                                return true // 我们处理了，WebView不要去加载这个错误的URL
+                            }
+                            return super.shouldOverrideUrlLoading(view, request)
+                        }
+
                         override fun onPageFinished(view: WebView?, url: String?) {
                             super.onPageFinished(view, url)
                             
-                            // 1. 注入 CSS 永久隐藏广告占位符和促销横幅
+                            // 1. 注入 CSS：去除了 .ad-showing，防止误伤整个视频播放器！
+                            // 并加入了 ytm-app-promo-renderer 隐藏 "OPEN APP" 按钮
                             val css = """
                                 var style = document.createElement('style');
                                 style.innerHTML = `
@@ -94,13 +122,15 @@ fun YouTubeWebScreen() {
                                     ytm-companion-ad-renderer,
                                     ytm-unlimited-promo-renderer,
                                     ytm-mealbar-promo-renderer,
-                                    .ad-showing { display: none !important; }
+                                    ytm-app-promo-renderer {
+                                        display: none !important;
+                                    }
                                 `;
                                 document.head.appendChild(style);
                             """.trimIndent()
                             view?.evaluateJavascript(css, null)
 
-                            // 2. 注入 JS 循环点击“跳过”并处理视频广告
+                            // 2. 注入 JS：0.3秒检测一次，自动点击跳过、静音并加速播放不可跳过的广告
                             val js = """
                                 setInterval(function() {
                                     // 自动点击跳过按钮
@@ -117,6 +147,10 @@ fun YouTubeWebScreen() {
                                         adVideo.playbackRate = 16.0;
                                         adVideo.currentTime = adVideo.duration - 0.1;
                                     }
+                                    
+                                    // 额外：隐藏 "Open App" 浮层
+                                    var openAppBanner = document.querySelector('ytm-app-promo-renderer');
+                                    if(openAppBanner) openAppBanner.remove();
                                 }, 300);
                             """.trimIndent()
                             view?.evaluateJavascript(js, null)
@@ -124,7 +158,6 @@ fun YouTubeWebScreen() {
 
                         override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
                             val url = request?.url?.toString() ?: ""
-                            // 屏蔽常见广告联盟和 YouTube 广告追踪域名
                             val adHosts = listOf(
                                 "googleads.g.doubleclick.net", 
                                 "pagead2.googlesyndication.com", 
@@ -148,7 +181,6 @@ fun YouTubeWebScreen() {
 }
 
 fun downloadAndInstallApk(context: Context, url: String) {
-    // 保持原样
     try {
         val request = DownloadManager.Request(Uri.parse(url))
             .setTitle("PureTube 更新")
