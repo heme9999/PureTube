@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:2:1-29:12
-INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:2:1-29:12
-INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:2:1-29:12
-INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:2:1-29:12
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:2:1-14:12
+INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:2:1-14:12
+INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:2:1-14:12
+INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:2:1-14:12
 MERGED from [androidx.media3:media3-ui:1.2.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/2b2f1a43ad7c916719be13d5583d50ea/transformed/media3-ui-1.2.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.media3:media3-extractor:1.2.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/e190e04e56d6702c4b38a553be8989b5/transformed/media3-extractor-1.2.0/AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.media3:media3-container:1.2.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/328b6c4af6d88220b0b01ff2c6c20aea/transformed/media3-container-1.2.0/AndroidManifest.xml:17:1-22:12
@@ -70,31 +70,31 @@ MERGED from [androidx.tracing:tracing:1.0.0] /Users/hemrmicloud.com/.gradle/cach
 		INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml
 	android:versionName
 		INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml
-	xmlns:tools
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:3:5-51
 	android:versionCode
 		INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml
 	xmlns:android
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:2:11-69
+	xmlns:ns1
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:2:70-114
 uses-permission#android.permission.INTERNET
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:5-67
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:3:5-67
 	android:name
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:22-64
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:3:22-64
 uses-permission#android.permission.ACCESS_NETWORK_STATE
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:5:5-79
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:5-79
 MERGED from [androidx.media3:media3-common:1.2.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/b1f29d6aeaf166bf4627177aba45bae0/transformed/media3-common-1.2.0/AndroidManifest.xml:22:5-79
 MERGED from [androidx.media3:media3-common:1.2.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/b1f29d6aeaf166bf4627177aba45bae0/transformed/media3-common-1.2.0/AndroidManifest.xml:22:5-79
 MERGED from [androidx.media3:media3-exoplayer:1.2.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/64495026f258cc0e5d8e143d021e9080/transformed/media3-exoplayer-1.2.0/AndroidManifest.xml:22:5-79
 MERGED from [androidx.media3:media3-exoplayer:1.2.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/64495026f258cc0e5d8e143d021e9080/transformed/media3-exoplayer-1.2.0/AndroidManifest.xml:22:5-79
 	android:name
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:5:22-76
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:4:22-76
 uses-permission#android.permission.REQUEST_INSTALL_PACKAGES
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:5-83
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:5:5-83
 	android:name
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:22-80
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:5:22-80
 application
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:5-28:19
-INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:5-28:19
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:5-13:19
+INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:5-13:19
 MERGED from [androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.core:core:1.12.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/896a60156f8ecaa22f625913c693b84f/transformed/core-1.12.0/AndroidManifest.xml:28:5-89
@@ -112,37 +112,43 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/hemrmicloud.com/.gra
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.12.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/896a60156f8ecaa22f625913c693b84f/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:14:9-35
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:78-104
 	android:label
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:12:9-41
-	tools:targetApi
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:17:9-29
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:45-77
+	ns1:targetApi
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:179-197
 	android:allowBackup
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:8:9-35
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:18-44
 	android:theme
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:15:9-46
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:105-142
 	android:usesCleartextTraffic
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:16:9-44
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:143-178
 activity#com.example.puretube.MainActivity
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:18:9-27:20
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:9-12:20
 	android:label
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:21:13-45
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:72-104
+	android:hardwareAccelerated
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:269-303
 	android:exported
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:20:13-36
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:48-71
+	android:supportsPictureInPicture
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:143-182
+	android:configChanges
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:183-268
 	android:theme
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:22:13-50
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:105-142
 	android:name
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:19:13-41
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:19-47
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:23:13-26:29
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:8:13-11:29
 action#android.intent.action.MAIN
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:24:17-69
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:9:17-69
 	android:name
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:24:25-66
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:9:25-66
 category#android.intent.category.LAUNCHER
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:25:17-77
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:17-77
 	android:name
-		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:25:27-74
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:27-74
 uses-sdk
 INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml
