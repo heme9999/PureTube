@@ -2,16 +2,19 @@ package com.example.puretube
 
 import android.annotation.SuppressLint
 import android.app.DownloadManager
+import android.app.UiModeManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.view.KeyEvent
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.CookieManager
@@ -26,6 +29,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -35,6 +39,10 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.key.*
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
@@ -53,6 +61,10 @@ class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        
+        val uiModeManager = getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
+        val isTv = uiModeManager.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION
+
         setContent {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
@@ -60,9 +72,8 @@ class MainActivity : ComponentActivity() {
                     val coroutineScope = rememberCoroutineScope()
                     var showSettings by remember { mutableStateOf(false) }
 
-                    // Make FAB Draggable
                     var offsetX by remember { mutableFloatStateOf(0f) }
-                    var offsetY by remember { mutableFloatStateOf(-200f) } // Move it up by default
+                    var offsetY by remember { mutableFloatStateOf(-200f) }
 
                     BackHandler {
                         if (myWebView?.canGoBack() == true) {
@@ -72,12 +83,248 @@ class MainActivity : ComponentActivity() {
                         }
                     }
 
-                    Scaffold(
-                        floatingActionButton = {
-                            if (isFabVisible) {
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        // TV专用顶栏，方便遥控器选择
+                        if (isTv) {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                                horizontalArrangement = Arrangement.End
+                            ) {
+                                Button(
+                                    onClick = { showSettings = true },
+                                    modifier = Modifier.focusable()
+                                ) {
+                                    Icon(Icons.Filled.Settings, contentDescription = "设置")
+                                    Spacer(Modifier.width(8.dp))
+                                    Text("设置与更新")
+                                }
+                            }
+                        }
+
+                        
+                        
+                        val webViewFocusRequester = remember { FocusRequester() }
+                        var hasRequestedFocus by remember { mutableStateOf(false) }
+                        
+                        LaunchedEffect(Unit) {
+                            try { webViewFocusRequester.requestFocus() } catch(e: Exception) {}
+                        }
+
+
+                        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+                            AndroidView(
+                                modifier = Modifier.fillMaxSize()
+                                    .focusRequester(webViewFocusRequester)
+                                    .onFocusChanged { if (it.isFocused && !hasRequestedFocus) hasRequestedFocus = true }
+                                    .onKeyEvent { event ->
+                                        if (isTv && event.type == KeyEventType.KeyDown) {
+                                            val dir = when (event.key) {
+                                                Key.DirectionUp -> "up"
+                                                Key.DirectionDown -> "down"
+                                                Key.DirectionLeft -> "left"
+                                                Key.DirectionRight -> "right"
+                                                Key.DirectionCenter, Key.Enter -> "enter"
+                                                else -> null
+                                            }
+                                            if (dir != null) {
+                                                if (dir == "enter") {
+                                                    myWebView?.evaluateJavascript("document.activeElement.click();", null)
+                                                } else {
+                                                    myWebView?.evaluateJavascript("window.SpatialNavigation.move('$dir');", null)
+                                                }
+                                                return@onKeyEvent true
+                                            }
+                                        }
+                                        false
+                                    },
+
+                                factory = { ctx ->
+                                    WebView(ctx).apply {
+                                        myWebView = this
+                                        layoutParams = ViewGroup.LayoutParams(
+                                            ViewGroup.LayoutParams.MATCH_PARENT,
+                                            ViewGroup.LayoutParams.MATCH_PARENT
+                                        )
+                                        
+                                        isFocusable = true
+                                        isFocusableInTouchMode = true
+                                        requestFocus()
+
+                                        settings.apply {
+                                            javaScriptEnabled = true
+                                            domStorageEnabled = true
+                                            databaseEnabled = true
+                                            mediaPlaybackRequiresUserGesture = false
+                                            loadsImagesAutomatically = true
+                                            mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                                            userAgentString = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+                                        }
+
+                                        val cookieManager = CookieManager.getInstance()
+                                        cookieManager.setAcceptCookie(true)
+                                        cookieManager.setAcceptThirdPartyCookies(this, true)
+
+                                        webViewClient = object : WebViewClient() {
+                                            override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
+                                                val url = request?.url?.toString() ?: return false
+                                                
+                                                if (url.contains("youtube.com/watch?v=") || url.contains("youtu.be/") || url.contains("youtube.com/shorts/")) {
+                                                    val intent = Intent(context, NativePlayerActivity::class.java).apply {
+                                                        putExtra("video_url", url)
+                                                    }
+                                                    context.startActivity(intent)
+                                                    return true
+                                                }
+                                                
+                                                if (url.startsWith("intent://") || url.startsWith("vnd.youtube") || url.startsWith("android-app://")) {
+                                                    try {
+                                                        val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
+                                                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                                                        context.startActivity(intent)
+                                                    } catch (e: Exception) { }
+                                                    return true
+                                                }
+                                                return super.shouldOverrideUrlLoading(view, request)
+                                            }
+
+                                            override fun onPageFinished(view: WebView?, url: String?) {
+                                                super.onPageFinished(view, url)
+                                                val js = """
+                                                    var style = document.createElement('style');
+                                                    style.innerHTML = `
+                                                        #player-control-container, #player-container-id, ytm-custom-control {
+                                                            min-height: 220px !important;
+                                                            display: block !important;
+                                                            visibility: visible !important;
+                                                        }
+                                                        ytm-promoted-video-renderer, ytm-companion-ad-renderer,
+                                                        ytm-app-promo-renderer, ytm-mealbar-promo-renderer,
+                                                        ytm-bottom-sheet-promo-renderer { display: none !important; }
+                                                    `;
+                                                    document.head.appendChild(style);
+
+                                                    var tvFocusStyle = document.createElement('style');
+                                                    tvFocusStyle.innerHTML = `
+                                                        *:focus, a:focus, button:focus, [role="button"]:focus {
+                                                            outline: 6px solid #00E5FF !important;
+                                                            outline-offset: -2px !important;
+                                                            box-shadow: 0 0 20px #00E5FF, inset 0 0 15px #00E5FF !important;
+                                                            background-color: rgba(0, 229, 255, 0.2) !important;
+                                                            border-radius: 8px !important;
+                                                            z-index: 9999 !important;
+                                                        }
+                                                    `;
+                                                    document.head.appendChild(tvFocusStyle);
+
+                                                    setInterval(function() {
+                                                        var skipBtn = document.querySelector('.ytp-ad-skip-button, .ytp-ad-skip-button-modern, .ytp-skip-ad-button');
+                                                        if (skipBtn) skipBtn.click();
+                                                        var closeBtn = document.querySelector('.ytp-ad-overlay-close-button');
+                                                        if (closeBtn) closeBtn.click();
+                                                        var adVid = document.querySelector('.ad-showing video, .html5-video-player.ad-showing video');
+                                                        if (adVid && !isNaN(adVid.duration)) {
+                                                            adVid.playbackRate = 16.0;
+                                                            adVid.currentTime = adVid.duration - 0.1;
+                                                        }
+                                                        var openAppBtns = document.querySelectorAll('a, button');
+                                                        openAppBtns.forEach(function(btn) {
+                                                            if (btn.textContent && (btn.textContent.trim().toLowerCase() === 'open app' || btn.textContent.trim() === '打开App')) {
+                                                                btn.style.display = 'none';
+                                                            }
+                                                        });
+                                                    }, 300);
+                                                """.trimIndent()
+                                                view?.evaluateJavascript(js, null)
+                                                
+                                                if (isTv) {
+                                                    try {
+                                                        val spatialJs = context.assets.open("spatial_navigation.js").bufferedReader().use { it.readText() }
+                                                        val initNavJs = """
+                                                            $spatialJs
+                                                            window.SpatialNavigation.init();
+                                                            window.SpatialNavigation.add({
+                                                                selector: 'a, button, ytm-rich-item-renderer, ytm-reel-item-renderer, .icon-button, [role="button"], [tabindex]'
+                                                            });
+                                                            window.SpatialNavigation.makeFocusable();
+                                                            // 自动重扫
+                                                            setInterval(function() {
+                                                                window.SpatialNavigation.makeFocusable();
+                                                            }, 2000);
+                                                        """.trimIndent()
+                                                        view?.evaluateJavascript(initNavJs, null)
+                                                    } catch (e: Exception) {
+                                                        e.printStackTrace()
+                                                    }
+                                                }
+                                            }
+
+                                            override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+                                                val url = request?.url?.toString() ?: ""
+                                                val adHosts = listOf(
+                                                    "googleads.g.doubleclick.net", "pagead2.googlesyndication.com", 
+                                                    "pubads.g.doubleclick.net", "youtube.com/api/stats/ads", "doubleclick.net"
+                                                )
+                                                if (adHosts.any { url.contains(it) }) {
+                                                    return WebResourceResponse("text/plain", "UTF-8", null)
+                                                }
+                                                return super.shouldInterceptRequest(view, request)
+                                            }
+                                        }
+                                        
+                                        webChromeClient = object : WebChromeClient() {
+                                            private var customView: View? = null
+                                            private var customViewCallback: CustomViewCallback? = null
+
+                                            override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
+                                                if (customView != null) {
+                                                    callback?.onCustomViewHidden()
+                                                    return
+                                                }
+                                                customView = view
+                                                customViewCallback = callback
+                                                
+                                                val decorView = window.decorView as FrameLayout
+                                                view?.setBackgroundColor(Color.BLACK)
+                                                decorView.addView(view, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+
+                                                isFabVisible = false
+                                                WindowCompat.setDecorFitsSystemWindows(window, false)
+                                                WindowInsetsControllerCompat(window, decorView).let { controller ->
+                                                    controller.hide(WindowInsetsCompat.Type.systemBars())
+                                                    controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                                                }
+                                                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
+                                                this@apply.visibility = View.GONE
+                                            }
+
+                                            override fun onHideCustomView() {
+                                                super.onHideCustomView()
+                                                val decorView = window.decorView as FrameLayout
+                                                decorView.removeView(customView)
+                                                customView = null
+                                                customViewCallback?.onCustomViewHidden()
+
+                                                isFabVisible = true
+                                                WindowCompat.setDecorFitsSystemWindows(window, true)
+                                                WindowInsetsControllerCompat(window, decorView).show(WindowInsetsCompat.Type.systemBars())
+                                                requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+                                                this@apply.visibility = View.VISIBLE
+                                            }
+                                        }
+
+                                        loadUrl("https://m.youtube.com")
+                                    }
+                                }
+                            )
+
+                            // 手机模式下的悬浮更新按钮
+                            if (!isTv && isFabVisible) {
                                 FloatingActionButton(
                                     onClick = { showSettings = true },
                                     modifier = Modifier
+                                        .align(Alignment.BottomEnd)
                                         .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
                                         .pointerInput(Unit) {
                                             detectDragGestures { change, dragAmount ->
@@ -92,167 +339,6 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                         }
-                    ) { _ ->
-                        AndroidView(
-                            modifier = Modifier.fillMaxSize(),
-                            factory = { ctx ->
-                                WebView(ctx).apply {
-                                    myWebView = this
-
-                                    isFocusable = true
-                                    isFocusableInTouchMode = true
-                                    requestFocus()
-
-                                    layoutParams = ViewGroup.LayoutParams(
-                                        ViewGroup.LayoutParams.MATCH_PARENT,
-                                        ViewGroup.LayoutParams.MATCH_PARENT
-                                    )
-                                    
-                                    settings.apply {
-                                        javaScriptEnabled = true
-                                        domStorageEnabled = true
-                                        databaseEnabled = true
-                                        mediaPlaybackRequiresUserGesture = false
-                                        loadsImagesAutomatically = true
-                                        mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                                        userAgentString = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
-                                    }
-
-                                    val cookieManager = CookieManager.getInstance()
-                                    cookieManager.setAcceptCookie(true)
-                                    cookieManager.setAcceptThirdPartyCookies(this, true)
-
-                                    webViewClient = object : WebViewClient() {
-                                        override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
-                                            val url = request?.url?.toString() ?: return false
-                                            
-                                            if (url.contains("youtube.com/watch?v=") || url.contains("youtu.be/")) {
-                                                val intent = Intent(context, NativePlayerActivity::class.java).apply {
-                                                    putExtra("video_url", url)
-                                                }
-                                                context.startActivity(intent)
-                                                return true
-                                            }
-                                            
-                                            if (url.startsWith("intent://") || url.startsWith("vnd.youtube") || url.startsWith("android-app://")) {
-                                                try {
-                                                    val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)
-                                                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                                                    context.startActivity(intent)
-                                                } catch (e: Exception) { }
-                                                return true
-                                            }
-                                            return super.shouldOverrideUrlLoading(view, request)
-                                        }
-
-                                        override fun onPageFinished(view: WebView?, url: String?) {
-                                            super.onPageFinished(view, url)
-                                            val js = """
-                                                var style = document.createElement('style');
-                                                style.innerHTML = `
-                                                    #player-control-container, #player-container-id, ytm-custom-control {
-                                                        min-height: 220px !important;
-                                                        display: block !important;
-                                                        visibility: visible !important;
-                                                    }
-                                                    ytm-promoted-video-renderer, ytm-companion-ad-renderer,
-                                                    ytm-app-promo-renderer, ytm-mealbar-promo-renderer,
-                                                    ytm-bottom-sheet-promo-renderer { display: none !important; }
-                                                `;
-                                                document.head.appendChild(style);
-
-                                                var tvFocusStyle = document.createElement('style');
-                                                tvFocusStyle.innerHTML = `
-                                                    *:focus, a:focus, button:focus, [role="button"]:focus {
-                                                        outline: 6px solid #00E5FF !important;
-                                                        outline-offset: -2px !important;
-                                                        box-shadow: 0 0 20px #00E5FF, inset 0 0 15px #00E5FF !important;
-                                                        background-color: rgba(0, 229, 255, 0.2) !important;
-                                                        border-radius: 8px !important;
-                                                        z-index: 9999 !important;
-                                                    }
-                                                `;
-                                                document.head.appendChild(tvFocusStyle);
-
-
-                                                setInterval(function() {
-                                                    var skipBtn = document.querySelector('.ytp-ad-skip-button, .ytp-ad-skip-button-modern, .ytp-skip-ad-button');
-                                                    if (skipBtn) skipBtn.click();
-                                                    var closeBtn = document.querySelector('.ytp-ad-overlay-close-button');
-                                                    if (closeBtn) closeBtn.click();
-                                                    var adVid = document.querySelector('.ad-showing video, .html5-video-player.ad-showing video');
-                                                    if (adVid && !isNaN(adVid.duration)) {
-                                                        adVid.playbackRate = 16.0;
-                                                        adVid.currentTime = adVid.duration - 0.1;
-                                                    }
-                                                    var openAppBtns = document.querySelectorAll('a, button');
-                                                    openAppBtns.forEach(function(btn) {
-                                                        if (btn.textContent && (btn.textContent.trim().toLowerCase() === 'open app' || btn.textContent.trim() === '打开App')) {
-                                                            btn.style.display = 'none';
-                                                        }
-                                                    });
-                                                }, 300);
-                                            """.trimIndent()
-                                            view?.evaluateJavascript(js, null)
-                                        }
-
-                                        override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
-                                            val url = request?.url?.toString() ?: ""
-                                            val adHosts = listOf(
-                                                "googleads.g.doubleclick.net", "pagead2.googlesyndication.com", 
-                                                "pubads.g.doubleclick.net", "youtube.com/api/stats/ads", "doubleclick.net"
-                                            )
-                                            if (adHosts.any { url.contains(it) }) {
-                                                return WebResourceResponse("text/plain", "UTF-8", null)
-                                            }
-                                            return super.shouldInterceptRequest(view, request)
-                                        }
-                                    }
-                                    
-                                    webChromeClient = object : WebChromeClient() {
-                                        private var customView: View? = null
-                                        private var customViewCallback: CustomViewCallback? = null
-
-                                        override fun onShowCustomView(view: View?, callback: CustomViewCallback?) {
-                                            if (customView != null) {
-                                                callback?.onCustomViewHidden()
-                                                return
-                                            }
-                                            customView = view
-                                            customViewCallback = callback
-                                            
-                                            val decorView = window.decorView as FrameLayout
-                                            view?.setBackgroundColor(Color.BLACK)
-                                            decorView.addView(view, FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
-
-                                            isFabVisible = false
-                                            WindowCompat.setDecorFitsSystemWindows(window, false)
-                                            WindowInsetsControllerCompat(window, decorView).let { controller ->
-                                                controller.hide(WindowInsetsCompat.Type.systemBars())
-                                                controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-                                            }
-                                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-                                            this@apply.visibility = View.GONE
-                                        }
-
-                                        override fun onHideCustomView() {
-                                            super.onHideCustomView()
-                                            val decorView = window.decorView as FrameLayout
-                                            decorView.removeView(customView)
-                                            customView = null
-                                            customViewCallback?.onCustomViewHidden()
-
-                                            isFabVisible = true
-                                            WindowCompat.setDecorFitsSystemWindows(window, true)
-                                            WindowInsetsControllerCompat(window, decorView).show(WindowInsetsCompat.Type.systemBars())
-                                            requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
-                                            this@apply.visibility = View.VISIBLE
-                                        }
-                                    }
-                                    loadUrl("https://m.youtube.com")
-                                }
-                            }
-                        )
                     }
 
                     if (showSettings) {
@@ -265,22 +351,22 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 Text(text = "PureTube", style = MaterialTheme.typography.headlineMedium)
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = "当前版本: v2.4.1", style = MaterialTheme.typography.bodyLarge)
+                                Text(text = "当前版本: v3.0.1-tv-alpha", style = MaterialTheme.typography.bodyLarge)
                                 Spacer(modifier = Modifier.height(24.dp))
                                 Button(
                                     onClick = {
                                         showSettings = false
                                         coroutineScope.launch {
                                             Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
-                                            val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.4.1")
+                                            val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v3.0.1-tv-alpha")
                                             if (apkUrl != null) {
                                                 downloadAndInstallApk(context, apkUrl)
                                             } else {
-                                                Toast.makeText(context, "当前已是最新版本 v2.4.1", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, "当前已是最新版本 v3.0.1-tv-alpha", Toast.LENGTH_SHORT).show()
                                             }
                                         }
                                     },
-                                    modifier = Modifier.fillMaxWidth()
+                                    modifier = Modifier.fillMaxWidth().focusable()
                                 ) {
                                     Text("检查更新")
                                 }
