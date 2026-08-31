@@ -26,6 +26,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Settings
@@ -33,7 +34,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.WindowCompat
@@ -41,6 +44,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.example.puretube.updater.GitHubUpdater
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     private var myWebView: WebView? = null
@@ -56,6 +60,10 @@ class MainActivity : ComponentActivity() {
                     val coroutineScope = rememberCoroutineScope()
                     var showSettings by remember { mutableStateOf(false) }
 
+                    // Make FAB Draggable
+                    var offsetX by remember { mutableFloatStateOf(0f) }
+                    var offsetY by remember { mutableFloatStateOf(-200f) } // Move it up by default
+
                     BackHandler {
                         if (myWebView?.canGoBack() == true) {
                             myWebView?.goBack()
@@ -69,7 +77,16 @@ class MainActivity : ComponentActivity() {
                             if (isFabVisible) {
                                 FloatingActionButton(
                                     onClick = { showSettings = true },
-                                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                                    modifier = Modifier
+                                        .offset { IntOffset(offsetX.roundToInt(), offsetY.roundToInt()) }
+                                        .pointerInput(Unit) {
+                                            detectDragGestures { change, dragAmount ->
+                                                change.consume()
+                                                offsetX += dragAmount.x
+                                                offsetY += dragAmount.y
+                                            }
+                                        },
+                                    containerColor = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
                                 ) {
                                     Icon(Icons.Filled.Settings, contentDescription = "设置")
                                 }
@@ -229,18 +246,18 @@ class MainActivity : ComponentActivity() {
                             ) {
                                 Text(text = "PureTube", style = MaterialTheme.typography.headlineMedium)
                                 Spacer(modifier = Modifier.height(8.dp))
-                                Text(text = "当前版本: v2.4.0", style = MaterialTheme.typography.bodyLarge)
+                                Text(text = "当前版本: v2.4.1", style = MaterialTheme.typography.bodyLarge)
                                 Spacer(modifier = Modifier.height(24.dp))
                                 Button(
                                     onClick = {
                                         showSettings = false
                                         coroutineScope.launch {
                                             Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
-                                            val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.4.0")
+                                            val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.4.1")
                                             if (apkUrl != null) {
                                                 downloadAndInstallApk(context, apkUrl)
                                             } else {
-                                                Toast.makeText(context, "当前已是最新版本 v2.4.0", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(context, "当前已是最新版本 v2.4.1", Toast.LENGTH_SHORT).show()
                                             }
                                         }
                                     },

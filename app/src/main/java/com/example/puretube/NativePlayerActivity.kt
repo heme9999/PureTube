@@ -51,11 +51,13 @@ class NativePlayerActivity : ComponentActivity() {
                                         streamUrl = videoStreams[0].content
                                         // Update PiP Params for Android 12+ (Seamless PiP)
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                                            val params = PictureInPictureParams.Builder()
-                                                .setAspectRatio(Rational(16, 9))
-                                                .setAutoEnterEnabled(true)
-                                                .build()
-                                            setPictureInPictureParams(params)
+                                            try {
+                                                val params = PictureInPictureParams.Builder()
+                                                    .setAspectRatio(Rational(16, 9))
+                                                    .setAutoEnterEnabled(true)
+                                                    .build()
+                                                setPictureInPictureParams(params)
+                                            } catch (e: Exception) {}
                                         }
                                     } else {
                                         Toast.makeText(this@NativePlayerActivity, "无法获取视频流", Toast.LENGTH_SHORT).show()
@@ -74,10 +76,7 @@ class NativePlayerActivity : ComponentActivity() {
                                 PlayerView(ctx).apply {
                                     playerView = this
                                     
-                                    // 强制隐藏失效的设置按钮
-                                    val settingsBtn = this.findViewById<View>(androidx.media3.ui.R.id.exo_settings)
-                                    settingsBtn?.visibility = View.GONE
-                                    
+                                    // Disable settings by not using TrackSelector
                                     exoPlayer = ExoPlayer.Builder(ctx).build().also { player ->
                                         this.player = player
                                         val mediaItem = MediaItem.fromUri(streamUrl!!)
@@ -85,6 +84,14 @@ class NativePlayerActivity : ComponentActivity() {
                                         player.prepare()
                                         player.playWhenReady = true
                                     }
+
+                                    // Attempt to hide settings button completely
+                                    try {
+                                        val settingsBtn = this.findViewById<View>(androidx.media3.ui.R.id.exo_settings)
+                                        settingsBtn?.visibility = View.GONE
+                                        settingsBtn?.isEnabled = false
+                                        settingsBtn?.layoutParams = android.widget.FrameLayout.LayoutParams(0, 0)
+                                    } catch (e: Exception) {}
                                 }
                             },
                             modifier = Modifier.fillMaxSize()
@@ -95,8 +102,7 @@ class NativePlayerActivity : ComponentActivity() {
         }
     }
 
-    override fun onUserLeaveHint() {
-        super.onUserLeaveHint()
+    private fun triggerPip() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
                 val params = PictureInPictureParams.Builder()
@@ -109,9 +115,23 @@ class NativePlayerActivity : ComponentActivity() {
         }
     }
 
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
+        triggerPip()
+    }
+
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
         playerView?.useController = !isInPictureInPictureMode
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // If not finishing, it means we are pushed to background (e.g. recent apps or home gesture)
+        // If PiP hasn't been triggered yet (autoEnterEnabled might fail on some skins), force it.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInPictureInPictureMode && !isFinishing) {
+            triggerPip()
+        }
     }
 
     override fun onDestroy() {

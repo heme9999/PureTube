@@ -10,5 +10,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-    <activity android:name=".NativePlayerActivity" android:configChanges="orientation|screenSize|screenLayout|keyboardHidden" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.PureTube.Fullscreen" android:supportsPictureInPicture="true" /></application>
+    <activity android:name=".NativePlayerActivity" android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|keyboardHidden|uiMode" android:screenOrientation="sensorLandscape" android:theme="@style/Theme.PureTube.Fullscreen" android:supportsPictureInPicture="true" android:launchMode="singleTask" /></application>
 </manifest>

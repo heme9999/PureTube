@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.puretube"
     android:versionCode="1"
-    android:versionName="2.4.0" >
+    android:versionName="2.4.2" >
 
     <uses-sdk
         android:minSdkVersion="24"
@@ -43,7 +43,8 @@
         </activity>
         <activity
             android:name="com.example.puretube.NativePlayerActivity"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:configChanges="screenSize|smallestScreenSize|screenLayout|orientation|keyboardHidden|uiMode"
+            android:launchMode="singleTask"
             android:screenOrientation="sensorLandscape"
             android:supportsPictureInPicture="true"
             android:theme="@style/Theme.PureTube.Fullscreen" />
