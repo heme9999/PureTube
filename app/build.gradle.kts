@@ -61,6 +61,8 @@ dependencies {
     implementation("androidx.media3:media3-exoplayer:$media3_version")
     implementation("androidx.media3:media3-ui:$media3_version")
     implementation("androidx.media3:media3-common:$media3_version")
+    implementation("androidx.media3:media3-exoplayer-hls:$media3_version")
+    implementation("androidx.media3:media3-exoplayer-dash:$media3_version")
     
     // Coil for image loading
     implementation("io.coil-kt:coil-compose:2.5.0")

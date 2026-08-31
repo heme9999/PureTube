@@ -181,8 +181,9 @@ fun PureTubeApp() {
                                             .build()
                                         val api = retrofit.create(PipedApiService::class.java)
                                         val stream = api.getVideoStream(videoId)
-                                        if (stream.hls != null) {
-                                            selectedVideoUrl = stream.hls
+                                        val streamUrl = stream.hls ?: stream.videoStreams.firstOrNull()?.url
+                                        if (streamUrl != null) {
+                                            selectedVideoUrl = streamUrl
                                         } else {
                                             Toast.makeText(context, "无法获取视频流", Toast.LENGTH_SHORT).show()
                                         }
