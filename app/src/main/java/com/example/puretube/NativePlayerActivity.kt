@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import android.os.Build
 import android.os.Bundle
 import android.util.Rational
+import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -16,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.trackselection.DefaultTrackSelector
 import androidx.media3.ui.PlayerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -49,6 +49,14 @@ class NativePlayerActivity : ComponentActivity() {
                                     val videoStreams = extractor.videoStreams
                                     if (videoStreams.isNotEmpty()) {
                                         streamUrl = videoStreams[0].content
+                                        // Update PiP Params for Android 12+ (Seamless PiP)
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                                            val params = PictureInPictureParams.Builder()
+                                                .setAspectRatio(Rational(16, 9))
+                                                .setAutoEnterEnabled(true)
+                                                .build()
+                                            setPictureInPictureParams(params)
+                                        }
                                     } else {
                                         Toast.makeText(this@NativePlayerActivity, "无法获取视频流", Toast.LENGTH_SHORT).show()
                                     }
@@ -65,8 +73,12 @@ class NativePlayerActivity : ComponentActivity() {
                             factory = { ctx ->
                                 PlayerView(ctx).apply {
                                     playerView = this
-                                    val trackSelector = DefaultTrackSelector(ctx)
-                                    exoPlayer = ExoPlayer.Builder(ctx).setTrackSelector(trackSelector).build().also { player ->
+                                    
+                                    // 强制隐藏失效的设置按钮
+                                    val settingsBtn = this.findViewById<View>(androidx.media3.ui.R.id.exo_settings)
+                                    settingsBtn?.visibility = View.GONE
+                                    
+                                    exoPlayer = ExoPlayer.Builder(ctx).build().also { player ->
                                         this.player = player
                                         val mediaItem = MediaItem.fromUri(streamUrl!!)
                                         player.setMediaItem(mediaItem)
