@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.puretube"
     android:versionCode="1"
-    android:versionName="2.1.0" >
+    android:versionName="2.2.0" >
 
     <uses-sdk
         android:minSdkVersion="24"
@@ -19,6 +19,7 @@
     <uses-permission android:name="com.example.puretube.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
 
     <application
+        android:name="com.example.puretube.PureTubeApp"
         android:allowBackup="true"
         android:appComponentFactory="androidx.core.app.CoreComponentFactory"
         android:debuggable="true"
@@ -41,6 +42,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="com.example.puretube.NativePlayerActivity"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+            android:screenOrientation="sensorLandscape"
+            android:theme="@style/Theme.PureTube.Fullscreen" />
 
         <provider
             android:name="androidx.startup.InitializationProvider"

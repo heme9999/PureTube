@@ -2,3 +2,4 @@ R_DEF: Internal format may change without notice
 local
 string app_name
 style Theme.PureTube
+style Theme.PureTube.Fullscreen

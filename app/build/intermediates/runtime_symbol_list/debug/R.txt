@@ -626,8 +626,9 @@ int style TextAppearance_Compat_Notification_Time_Media 0x7f0c002a
 int style TextAppearance_Compat_Notification_Title 0x7f0c002b
 int style TextAppearance_Compat_Notification_Title_Media 0x7f0c002c
 int style Theme_PureTube 0x7f0c002d
-int style Widget_Compat_NotificationActionContainer 0x7f0c002e
-int style Widget_Compat_NotificationActionText 0x7f0c002f
+int style Theme_PureTube_Fullscreen 0x7f0c002e
+int style Widget_Compat_NotificationActionContainer 0x7f0c002f
+int style Widget_Compat_NotificationActionText 0x7f0c0030
 int[] styleable AnimatedStateListDrawableCompat { 0x0101011c, 0x01010194, 0x01010195, 0x01010196, 0x0101030c, 0x0101030d }
 int styleable AnimatedStateListDrawableCompat_android_dither 0
 int styleable AnimatedStateListDrawableCompat_android_visible 1

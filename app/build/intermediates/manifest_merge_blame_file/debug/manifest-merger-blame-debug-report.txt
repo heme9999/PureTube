@@ -2,7 +2,7 @@
 2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 3    package="com.example.puretube"
 4    android:versionCode="1"
-5    android:versionName="2.1.0" >
+5    android:versionName="2.2.0" >
 6
 7    <uses-sdk
 8        android:minSdkVersion="24"
@@ -30,114 +30,126 @@
 19-->[androidx.core:core:1.12.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/896a60156f8ecaa22f625913c693b84f/transformed/core-1.12.0/AndroidManifest.xml:26:22-94
 20
 21    <application
-21-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:5-13:19
-22        android:allowBackup="true"
-22-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:18-44
-23        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
-23-->[androidx.core:core:1.12.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/896a60156f8ecaa22f625913c693b84f/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
-24        android:debuggable="true"
-25        android:extractNativeLibs="false"
-26        android:label="@string/app_name"
-26-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:45-77
-27        android:supportsRtl="true"
-27-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:78-104
-28        android:theme="@style/Theme.PureTube"
-28-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:105-142
-29        android:usesCleartextTraffic="true" >
-29-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:143-178
-30        <activity
-30-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:9-12:20
-31            android:name="com.example.puretube.MainActivity"
-31-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:19-47
-32            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
-32-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:183-268
-33            android:exported="true"
-33-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:48-71
-34            android:hardwareAccelerated="true"
-34-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:269-303
-35            android:label="@string/app_name"
-35-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:72-104
-36            android:supportsPictureInPicture="true"
-36-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:143-182
-37            android:theme="@style/Theme.PureTube" >
-37-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:105-142
-38            <intent-filter>
-38-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:8:13-11:29
-39                <action android:name="android.intent.action.MAIN" />
-39-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:9:17-69
-39-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:9:25-66
-40
-41                <category android:name="android.intent.category.LAUNCHER" />
-41-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:17-77
-41-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:27-74
-42            </intent-filter>
-43        </activity>
-44
-45        <provider
-45-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:24:9-32:20
-46            android:name="androidx.startup.InitializationProvider"
-46-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:25:13-67
-47            android:authorities="com.example.puretube.androidx-startup"
-47-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:26:13-68
-48            android:exported="false" >
-48-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:27:13-37
-49            <meta-data
-49-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
-50                android:name="androidx.emoji2.text.EmojiCompatInitializer"
-50-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:30:17-75
-51                android:value="androidx.startup" />
-51-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:31:17-49
-52            <meta-data
-52-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/hemrmicloud.com/.gradle/caches/transforms-4/bd6c7c08a39c336ad841e0475a465d1f/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:29:13-31:52
-53                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
-53-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/hemrmicloud.com/.gradle/caches/transforms-4/bd6c7c08a39c336ad841e0475a465d1f/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:30:17-78
-54                android:value="androidx.startup" />
-54-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/hemrmicloud.com/.gradle/caches/transforms-4/bd6c7c08a39c336ad841e0475a465d1f/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:31:17-49
+21-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:5-13:236
+22        android:name="com.example.puretube.PureTubeApp"
+22-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:198-225
+23        android:allowBackup="true"
+23-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:18-44
+24        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+24-->[androidx.core:core:1.12.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/896a60156f8ecaa22f625913c693b84f/transformed/core-1.12.0/AndroidManifest.xml:28:18-86
+25        android:debuggable="true"
+26        android:extractNativeLibs="false"
+27        android:label="@string/app_name"
+27-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:45-77
+28        android:supportsRtl="true"
+28-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:78-104
+29        android:theme="@style/Theme.PureTube"
+29-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:105-142
+30        android:usesCleartextTraffic="true" >
+30-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:143-178
+31        <activity
+31-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:9-12:20
+32            android:name="com.example.puretube.MainActivity"
+32-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:19-47
+33            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|uiMode"
+33-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:183-268
+34            android:exported="true"
+34-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:48-71
+35            android:hardwareAccelerated="true"
+35-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:269-303
+36            android:label="@string/app_name"
+36-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:72-104
+37            android:supportsPictureInPicture="true"
+37-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:143-182
+38            android:theme="@style/Theme.PureTube" >
+38-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:105-142
+39            <intent-filter>
+39-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:8:13-11:29
+40                <action android:name="android.intent.action.MAIN" />
+40-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:9:17-69
+40-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:9:25-66
+41
+42                <category android:name="android.intent.category.LAUNCHER" />
+42-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:17-77
+42-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:27-74
+43            </intent-filter>
+44        </activity>
+45        <activity
+45-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:5-222
+46            android:name="com.example.puretube.NativePlayerActivity"
+46-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:15-51
+47            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+47-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:52-126
+48            android:screenOrientation="sensorLandscape"
+48-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:127-170
+49            android:theme="@style/Theme.PureTube.Fullscreen" />
+49-->/Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:171-219
+50
+51        <provider
+51-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:24:9-32:20
+52            android:name="androidx.startup.InitializationProvider"
+52-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:25:13-67
+53            android:authorities="com.example.puretube.androidx-startup"
+53-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:26:13-68
+54            android:exported="false" >
+54-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:27:13-37
 55            <meta-data
-55-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
-56                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
-56-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+55-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:29:13-31:52
+56                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+56-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:30:17-75
 57                android:value="androidx.startup" />
-57-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
-58        </provider>
-59
-60        <receiver
-60-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
-61            android:name="androidx.profileinstaller.ProfileInstallReceiver"
-61-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
-62            android:directBootAware="false"
-62-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
-63            android:enabled="true"
-63-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
-64            android:exported="true"
-64-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
-65            android:permission="android.permission.DUMP" >
-65-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
-66            <intent-filter>
-66-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
-67                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
-67-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
-67-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
-68            </intent-filter>
-69            <intent-filter>
-69-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
-70                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
-70-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
-70-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
-71            </intent-filter>
+57-->[androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:31:17-49
+58            <meta-data
+58-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/hemrmicloud.com/.gradle/caches/transforms-4/bd6c7c08a39c336ad841e0475a465d1f/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:29:13-31:52
+59                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+59-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/hemrmicloud.com/.gradle/caches/transforms-4/bd6c7c08a39c336ad841e0475a465d1f/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:30:17-78
+60                android:value="androidx.startup" />
+60-->[androidx.lifecycle:lifecycle-process:2.6.2] /Users/hemrmicloud.com/.gradle/caches/transforms-4/bd6c7c08a39c336ad841e0475a465d1f/transformed/lifecycle-process-2.6.2/AndroidManifest.xml:31:17-49
+61            <meta-data
+61-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:29:13-31:52
+62                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+62-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:30:17-85
+63                android:value="androidx.startup" />
+63-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:31:17-49
+64        </provider>
+65
+66        <receiver
+66-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:34:9-52:20
+67            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+67-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:35:13-76
+68            android:directBootAware="false"
+68-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:36:13-44
+69            android:enabled="true"
+69-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:37:13-35
+70            android:exported="true"
+70-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:38:13-36
+71            android:permission="android.permission.DUMP" >
+71-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:39:13-57
 72            <intent-filter>
-72-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
-73                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
-73-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
-73-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+72-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:40:13-42:29
+73                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+73-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:17-91
+73-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:41:25-88
 74            </intent-filter>
 75            <intent-filter>
-75-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
-76                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
-76-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
-76-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+75-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:43:13-45:29
+76                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+76-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:17-85
+76-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:44:25-82
 77            </intent-filter>
-78        </receiver>
-79    </application>
-80
-81</manifest>
+78            <intent-filter>
+78-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:46:13-48:29
+79                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+79-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:17-88
+79-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:47:25-85
+80            </intent-filter>
+81            <intent-filter>
+81-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:49:13-51:29
+82                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+82-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:17-95
+82-->[androidx.profileinstaller:profileinstaller:1.3.1] /Users/hemrmicloud.com/.gradle/caches/transforms-4/8af3ccfc2ec63ae4c884cb32f08686b0/transformed/profileinstaller-1.3.1/AndroidManifest.xml:50:25-92
+83            </intent-filter>
+84        </receiver>
+85    </application>
+86
+87</manifest>

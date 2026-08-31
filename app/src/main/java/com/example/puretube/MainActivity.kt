@@ -147,6 +147,16 @@ class MainActivity : ComponentActivity() {
                         webViewClient = object : WebViewClient() {
                             override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
                                 val url = request?.url?.toString() ?: return false
+                                
+                                // 如果是 YouTube 视频播放页面，拦截并启动我们的原生播放器
+                                if (url.contains("youtube.com/watch?v=") || url.contains("youtu.be/")) {
+                                    val intent = Intent(context, NativePlayerActivity::class.java).apply {
+                                        putExtra("video_url", url)
+                                    }
+                                    context.startActivity(intent)
+                                    return true
+                                }
+                                
                                 if (url.startsWith("intent://") || url.startsWith("vnd.youtube") || url.startsWith("android-app://")) {
                                     try {
                                         val intent = Intent.parseUri(url, Intent.URI_INTENT_SCHEME)

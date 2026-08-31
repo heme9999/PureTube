@@ -93,8 +93,8 @@ ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/An
 	android:name
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:5:22-80
 application
-ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:5-13:19
-INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:5-13:19
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:5-13:236
+INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:5-13:236
 MERGED from [androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.emoji2:emoji2:1.4.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/6f612dc3c931c25d090e6cab9c30f7c1/transformed/emoji2-1.4.0/AndroidManifest.xml:23:5-33:19
 MERGED from [androidx.core:core:1.12.0] /Users/hemrmicloud.com/.gradle/caches/transforms-4/896a60156f8ecaa22f625913c693b84f/transformed/core-1.12.0/AndroidManifest.xml:28:5-89
@@ -123,6 +123,8 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /Users/hemrmicloud.com/.gra
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:105-142
 	android:usesCleartextTraffic
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:143-178
+	android:name
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:6:198-225
 activity#com.example.puretube.MainActivity
 ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:7:9-12:20
 	android:label
@@ -149,6 +151,16 @@ category#android.intent.category.LAUNCHER
 ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:17-77
 	android:name
 		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:10:27-74
+activity#com.example.puretube.NativePlayerActivity
+ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:5-222
+	android:screenOrientation
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:127-170
+	android:configChanges
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:52-126
+	android:theme
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:171-219
+	android:name
+		ADDED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml:13:15-51
 uses-sdk
 INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from /Users/hemrmicloud.com/Documents/antigravity/PureTube/app/src/main/AndroidManifest.xml
