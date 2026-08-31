@@ -1,41 +1,33 @@
 package com.example.puretube
 
+import android.annotation.SuppressLint
 import android.app.DownloadManager
 import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.IntentFilter
-import android.os.Environment
-import androidx.core.content.ContextCompat
 import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.webkit.WebChromeClient
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
+import android.webkit.WebSettings
+import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
-import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
-import com.example.puretube.api.PipedApiService
-import com.example.puretube.api.TrendingResponse
-import com.example.puretube.ui.VideoPlayerScreen
+import androidx.compose.ui.viewinterop.AndroidView
 import com.example.puretube.updater.GitHubUpdater
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import java.util.concurrent.TimeUnit
-import retrofit2.Retrofit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,190 +35,101 @@ class MainActivity : ComponentActivity() {
         setContent {
             MaterialTheme {
                 Surface(modifier = Modifier.fillMaxSize()) {
-                    PureTubeApp()
+                    YouTubeWebScreen()
                 }
             }
         }
     }
 }
 
+@SuppressLint("SetJavaScriptEnabled")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun PureTubeApp() {
+fun YouTubeWebScreen() {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
-    
-    var videos by remember { mutableStateOf<List<TrendingResponse>>(emptyList()) }
-    var selectedVideoUrl by remember { mutableStateOf<String?>(null) }
-    var isLoading by remember { mutableStateOf(false) }
-    var errorMessage by remember { mutableStateOf<String?>(null) }
-    
-    var apiUrl by remember { mutableStateOf("https://api.piped.private.coffee/") }
-    var showSettings by remember { mutableStateOf(false) }
+    var webViewRef by remember { mutableStateOf<WebView?>(null) }
 
-    fun loadVideos() {
-        coroutineScope.launch {
-            isLoading = true
-            errorMessage = null
-            try {
-                val json = Json { ignoreUnknownKeys = true; coerceInputValues = true }
-                val client = OkHttpClient.Builder()
-                    .connectTimeout(30, TimeUnit.SECONDS)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .build()
-                val retrofit = Retrofit.Builder()
-                    .baseUrl(apiUrl)
-                    .client(client)
-                    .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-                    .build()
-                val api = retrofit.create(PipedApiService::class.java)
-                videos = api.getTrending()
-            } catch (e: Exception) {
-                errorMessage = e.message ?: e.toString()
-                e.printStackTrace()
-            } finally {
-                isLoading = false
-            }
-        }
-    }
-
-    LaunchedEffect(Unit) {
-        loadVideos()
-    }
-
-    if (selectedVideoUrl != null) {
-        // Simple back button over the player
-        Box(modifier = Modifier.fillMaxSize()) {
-            VideoPlayerScreen(videoUrl = selectedVideoUrl!!)
-            Button(
-                onClick = { selectedVideoUrl = null },
-                modifier = Modifier.padding(16.dp)
-            ) {
-                Text("返回列表")
-            }
-        }
-    } else {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("PureTube v1.0.5") },
-                    actions = {
-                        IconButton(onClick = { loadVideos() }) {
-                            Icon(Icons.Filled.Refresh, contentDescription = "刷新")
-                        }
-                        IconButton(onClick = { showSettings = !showSettings }) {
-                            Icon(Icons.Filled.Settings, contentDescription = "设置")
-                        }
-                        Button(onClick = {
-                            coroutineScope.launch {
-                                Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
-                                val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v1.0.5")
-                                if (apkUrl != null) {
-                                    downloadAndInstallApk(context, apkUrl)
-                                } else {
-                                    Toast.makeText(context, "当前已是最新版本，或未发布 Release", Toast.LENGTH_LONG).show()
-                                }
-                            }
-                        }) {
-                            Text("在线更新")
-                        }
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("PureTube v2.0") },
+                actions = {
+                    IconButton(onClick = { webViewRef?.reload() }) {
+                        Icon(Icons.Filled.Refresh, contentDescription = "刷新")
                     }
-                )
-            }
-        ) { paddingValues ->
-            Column(modifier = Modifier.padding(paddingValues)) {
-                if (showSettings) {
-                    Card(modifier = Modifier.padding(8.dp).fillMaxWidth()) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text("API 节点设置 (如果网络受限请更换)", style = MaterialTheme.typography.titleMedium)
-                            OutlinedTextField(
-                                value = apiUrl,
-                                onValueChange = { apiUrl = it },
-                                label = { Text("Piped API URL") },
-                                modifier = Modifier.fillMaxWidth().padding(top = 8.dp)
-                            )
-                            Row(modifier = Modifier.padding(top = 8.dp)) {
-                                Button(onClick = { apiUrl = "https://pipedapi.tokhmi.xyz/" }) { Text("节点 1") }
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Button(onClick = { apiUrl = "https://pipedapi.smnz.de/" }) { Text("节点 2") }
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Button(onClick = { apiUrl = "https://pipedapi.kavin.rocks/" }) { Text("节点 3") }
-                            }
-                            Button(onClick = { loadVideos(); showSettings = false }, modifier = Modifier.padding(top = 8.dp)) {
-                                Text("保存并重试")
+                    Button(onClick = {
+                        coroutineScope.launch {
+                            Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
+                            val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.0.0")
+                            if (apkUrl != null) {
+                                downloadAndInstallApk(context, apkUrl)
+                            } else {
+                                Toast.makeText(context, "当前已是最新版本", Toast.LENGTH_SHORT).show()
                             }
                         }
+                    }) {
+                        Text("在线更新")
                     }
                 }
-
-                if (isLoading) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                        CircularProgressIndicator()
-                    }
-                } else if (errorMessage != null) {
-                    Box(modifier = Modifier.fillMaxSize().padding(16.dp), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                        Column {
-                            Text("网络错误或API受限 (可能需将 API 域名加入梯子代理规则):", color = MaterialTheme.colorScheme.error)
-                            Text(errorMessage ?: "", modifier = Modifier.padding(top = 8.dp))
-                        }
-                    }
-                } else if (videos.isEmpty()) {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                        Text("没有获取到视频数据")
-                    }
-                } else {
-                    LazyColumn {
-                        items(videos) { video ->
-                            VideoItem(video) {
-                                coroutineScope.launch {
-                                    val videoId = video.url.substringAfter("?v=")
-                                    try {
-                                        val json = Json { ignoreUnknownKeys = true; coerceInputValues = true }
-                                        val retrofit = Retrofit.Builder()
-                                            .baseUrl(apiUrl)
-                                            .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
-                                            .build()
-                                        val api = retrofit.create(PipedApiService::class.java)
-                                        val stream = api.getVideoStream(videoId)
-                                        val streamUrl = stream.hls ?: stream.videoStreams.firstOrNull()?.url
-                                        if (streamUrl != null) {
-                                            selectedVideoUrl = streamUrl
-                                        } else {
-                                            Toast.makeText(context, "无法获取视频流", Toast.LENGTH_SHORT).show()
-                                        }
-                                    } catch (e: Exception) {
-                                        e.printStackTrace()
-                                        Toast.makeText(context, "播放请求失败: ${e.message}", Toast.LENGTH_SHORT).show()
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun VideoItem(video: TrendingResponse, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .clickable(onClick = onClick)
-    ) {
-        Column {
-            AsyncImage(
-                model = video.thumbnail,
-                contentDescription = null,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
             )
-            Text(text = video.title, modifier = Modifier.padding(8.dp), style = MaterialTheme.typography.titleMedium)
-            Text(text = video.uploaderName, modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp), style = MaterialTheme.typography.bodyMedium)
         }
+    ) { paddingValues ->
+        AndroidView(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize(),
+            factory = { ctx ->
+                WebView(ctx).apply {
+                    webViewRef = this
+                    settings.javaScriptEnabled = true
+                    settings.domStorageEnabled = true
+                    settings.mediaPlaybackRequiresUserGesture = false
+                    settings.userAgentString = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+
+                    webViewClient = object : WebViewClient() {
+                        override fun onPageFinished(view: WebView?, url: String?) {
+                            super.onPageFinished(view, url)
+                            // 注入强力去广告 JS
+                            val js = """
+                                setInterval(function() {
+                                    // 点击跳过广告按钮
+                                    var skipBtn = document.querySelector('.ytp-ad-skip-button, .ytp-ad-skip-button-modern');
+                                    if (skipBtn) { skipBtn.click(); }
+                                    
+                                    // 关闭重叠广告
+                                    var closeBtn = document.querySelector('.ytp-ad-overlay-close-button');
+                                    if (closeBtn) { closeBtn.click(); }
+                                    
+                                    // 隐藏首页的推广视频
+                                    var ads = document.querySelectorAll('ad-slot-renderer, ytm-promoted-video-renderer');
+                                    ads.forEach(function(ad) { ad.style.display = 'none'; });
+                                    
+                                    // 加速无法跳过的视频广告
+                                    var adVideo = document.querySelector('.ad-showing video');
+                                    if (adVideo) {
+                                        adVideo.playbackRate = 16.0;
+                                        adVideo.currentTime = adVideo.duration;
+                                    }
+                                }, 300);
+                            """.trimIndent()
+                            view?.evaluateJavascript(js, null)
+                        }
+
+                        override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
+                            val url = request?.url?.toString() ?: ""
+                            val adHosts = listOf("googleads.g.doubleclick.net", "pagead2.googlesyndication.com", "pubads.g.doubleclick.net", "youtube.com/api/stats/ads")
+                            if (adHosts.any { url.contains(it) }) {
+                                return WebResourceResponse("text/plain", "UTF-8", null)
+                            }
+                            return super.shouldInterceptRequest(view, request)
+                        }
+                    }
+                    webChromeClient = WebChromeClient()
+                    loadUrl("https://m.youtube.com")
+                }
+            }
+        )
     }
 }
 
@@ -240,8 +143,7 @@ fun downloadAndInstallApk(context: Context, url: String) {
 
         val downloadManager = context.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
         val downloadId = downloadManager.enqueue(request)
-
-        Toast.makeText(context, "开始后台下载更新，下载完成后将自动提示安装", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "开始后台下载更新，完成后将自动提示安装", Toast.LENGTH_LONG).show()
 
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(ctx: Context, intent: Intent) {
@@ -255,11 +157,9 @@ fun downloadAndInstallApk(context: Context, url: String) {
                     try {
                         ctx.startActivity(installIntent)
                     } catch (e: Exception) {
-                        Toast.makeText(ctx, "打开安装包失败，请到系统的'下载'目录手动点击安装", Toast.LENGTH_LONG).show()
+                        Toast.makeText(ctx, "打开安装包失败，请到下载目录手动安装", Toast.LENGTH_LONG).show()
                     }
-                    try {
-                        ctx.unregisterReceiver(this)
-                    } catch (e: Exception) {}
+                    try { ctx.unregisterReceiver(this) } catch (e: Exception) {}
                 }
             }
         }
