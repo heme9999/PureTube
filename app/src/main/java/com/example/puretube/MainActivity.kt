@@ -43,7 +43,6 @@ class MainActivity : ComponentActivity() {
 }
 
 @SuppressLint("SetJavaScriptEnabled")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun YouTubeWebScreen() {
     val context = LocalContext.current
@@ -51,65 +50,72 @@ fun YouTubeWebScreen() {
     var webViewRef by remember { mutableStateOf<WebView?>(null) }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("PureTube v2.0") },
-                actions = {
-                    IconButton(onClick = { webViewRef?.reload() }) {
-                        Icon(Icons.Filled.Refresh, contentDescription = "刷新")
-                    }
-                    Button(onClick = {
-                        coroutineScope.launch {
-                            Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
-                            val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.0.0")
-                            if (apkUrl != null) {
-                                downloadAndInstallApk(context, apkUrl)
-                            } else {
-                                Toast.makeText(context, "当前已是最新版本", Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }) {
-                        Text("在线更新")
+        floatingActionButton = {
+            FloatingActionButton(onClick = {
+                coroutineScope.launch {
+                    Toast.makeText(context, "正在检查更新...", Toast.LENGTH_SHORT).show()
+                    val apkUrl = GitHubUpdater.checkForUpdates("heme9999", "PureTube", "v2.0.1")
+                    if (apkUrl != null) {
+                        downloadAndInstallApk(context, apkUrl)
+                    } else {
+                        Toast.makeText(context, "当前已是最新版本 v2.0.1", Toast.LENGTH_SHORT).show()
                     }
                 }
-            )
+            }) {
+                Icon(Icons.Filled.Refresh, contentDescription = "更新")
+            }
         }
     ) { paddingValues ->
         AndroidView(
-            modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(), // 全屏，不使用 paddingValues 限制顶部
             factory = { ctx ->
                 WebView(ctx).apply {
                     webViewRef = this
                     settings.javaScriptEnabled = true
                     settings.domStorageEnabled = true
                     settings.mediaPlaybackRequiresUserGesture = false
-                    settings.userAgentString = "Mozilla/5.0 (Linux; Android 13; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/116.0.0.0 Mobile Safari/537.36"
+                    settings.loadsImagesAutomatically = true
+                    settings.mixedContentMode = WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                    
+                    // 开启自适应屏幕
+                    settings.useWideViewPort = true
+                    settings.loadWithOverviewMode = true
 
                     webViewClient = object : WebViewClient() {
                         override fun onPageFinished(view: WebView?, url: String?) {
                             super.onPageFinished(view, url)
-                            // 注入强力去广告 JS
+                            
+                            // 1. 注入 CSS 永久隐藏广告占位符和促销横幅
+                            val css = """
+                                var style = document.createElement('style');
+                                style.innerHTML = `
+                                    ad-slot-renderer, 
+                                    ytm-promoted-video-renderer, 
+                                    ytm-companion-ad-renderer,
+                                    ytm-unlimited-promo-renderer,
+                                    ytm-mealbar-promo-renderer,
+                                    .ad-showing { display: none !important; }
+                                `;
+                                document.head.appendChild(style);
+                            """.trimIndent()
+                            view?.evaluateJavascript(css, null)
+
+                            // 2. 注入 JS 循环点击“跳过”并处理视频广告
                             val js = """
                                 setInterval(function() {
-                                    // 点击跳过广告按钮
-                                    var skipBtn = document.querySelector('.ytp-ad-skip-button, .ytp-ad-skip-button-modern');
+                                    // 自动点击跳过按钮
+                                    var skipBtn = document.querySelector('.ytp-ad-skip-button, .ytp-ad-skip-button-modern, .ytp-skip-ad-button');
                                     if (skipBtn) { skipBtn.click(); }
                                     
-                                    // 关闭重叠广告
+                                    // 关闭叠加广告
                                     var closeBtn = document.querySelector('.ytp-ad-overlay-close-button');
                                     if (closeBtn) { closeBtn.click(); }
                                     
-                                    // 隐藏首页的推广视频
-                                    var ads = document.querySelectorAll('ad-slot-renderer, ytm-promoted-video-renderer');
-                                    ads.forEach(function(ad) { ad.style.display = 'none'; });
-                                    
-                                    // 加速无法跳过的视频广告
-                                    var adVideo = document.querySelector('.ad-showing video');
-                                    if (adVideo) {
+                                    // 如果有不可跳过的视频广告，快进到底
+                                    var adVideo = document.querySelector('.ad-showing video, .html5-video-player.ad-showing video');
+                                    if (adVideo && !isNaN(adVideo.duration)) {
                                         adVideo.playbackRate = 16.0;
-                                        adVideo.currentTime = adVideo.duration;
+                                        adVideo.currentTime = adVideo.duration - 0.1;
                                     }
                                 }, 300);
                             """.trimIndent()
@@ -118,7 +124,15 @@ fun YouTubeWebScreen() {
 
                         override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
                             val url = request?.url?.toString() ?: ""
-                            val adHosts = listOf("googleads.g.doubleclick.net", "pagead2.googlesyndication.com", "pubads.g.doubleclick.net", "youtube.com/api/stats/ads")
+                            // 屏蔽常见广告联盟和 YouTube 广告追踪域名
+                            val adHosts = listOf(
+                                "googleads.g.doubleclick.net", 
+                                "pagead2.googlesyndication.com", 
+                                "pubads.g.doubleclick.net", 
+                                "youtube.com/api/stats/ads",
+                                "youtube.com/ptracking",
+                                "doubleclick.net"
+                            )
                             if (adHosts.any { url.contains(it) }) {
                                 return WebResourceResponse("text/plain", "UTF-8", null)
                             }
@@ -134,6 +148,7 @@ fun YouTubeWebScreen() {
 }
 
 fun downloadAndInstallApk(context: Context, url: String) {
+    // 保持原样
     try {
         val request = DownloadManager.Request(Uri.parse(url))
             .setTitle("PureTube 更新")
