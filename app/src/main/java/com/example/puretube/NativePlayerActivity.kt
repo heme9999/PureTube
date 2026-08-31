@@ -6,14 +6,17 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Rational
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
@@ -26,6 +29,7 @@ import org.schabi.newpipe.extractor.ServiceList
 class NativePlayerActivity : ComponentActivity() {
     private var exoPlayer: ExoPlayer? = null
     private var playerView: PlayerView? = null
+    private var isInPipModeState = mutableStateOf(false)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,9 +37,10 @@ class NativePlayerActivity : ComponentActivity() {
         
         setContent {
             MaterialTheme {
-                Surface(modifier = Modifier.fillMaxSize()) {
+                Surface(modifier = Modifier.fillMaxSize(), color = Color.Black) {
                     val coroutineScope = rememberCoroutineScope()
                     var streamUrl by remember { mutableStateOf<String?>(null) }
+                    val isPip = isInPipModeState.value
                     
                     LaunchedEffect(videoUrl) {
                         if (videoUrl.isNotEmpty()) {
@@ -49,7 +54,6 @@ class NativePlayerActivity : ComponentActivity() {
                                     val videoStreams = extractor.videoStreams
                                     if (videoStreams.isNotEmpty()) {
                                         streamUrl = videoStreams[0].content
-                                        // Update PiP Params for Android 12+ (Seamless PiP)
                                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                                             try {
                                                 val params = PictureInPictureParams.Builder()
@@ -70,68 +74,98 @@ class NativePlayerActivity : ComponentActivity() {
                         }
                     }
                     
-                    if (streamUrl != null) {
-                        AndroidView(
-                            factory = { ctx ->
-                                PlayerView(ctx).apply {
-                                    playerView = this
-                                    
-                                    // Disable settings by not using TrackSelector
-                                    exoPlayer = ExoPlayer.Builder(ctx).build().also { player ->
-                                        this.player = player
-                                        val mediaItem = MediaItem.fromUri(streamUrl!!)
-                                        player.setMediaItem(mediaItem)
-                                        player.prepare()
-                                        player.playWhenReady = true
-                                    }
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        if (streamUrl != null) {
+                            AndroidView(
+                                factory = { ctx ->
+                                    PlayerView(ctx).apply {
+                                        playerView = this
+                                        
+                                        exoPlayer = ExoPlayer.Builder(ctx).build().also { player ->
+                                            this.player = player
+                                            val mediaItem = MediaItem.fromUri(streamUrl!!)
+                                            player.setMediaItem(mediaItem)
+                                            player.prepare()
+                                            player.playWhenReady = true
+                                        }
 
-                                    // Attempt to hide settings button completely
-                                    try {
-                                        val settingsBtn = this.findViewById<View>(androidx.media3.ui.R.id.exo_settings)
-                                        settingsBtn?.visibility = View.GONE
-                                        settingsBtn?.isEnabled = false
-                                        settingsBtn?.layoutParams = android.widget.FrameLayout.LayoutParams(0, 0)
-                                    } catch (e: Exception) {}
+                                        // Completely destroy the settings button from the view hierarchy
+                                        try {
+                                            val settingsBtn = this.findViewById<View>(androidx.media3.ui.R.id.exo_settings)
+                                            if (settingsBtn != null && settingsBtn.parent != null) {
+                                                (settingsBtn.parent as ViewGroup).removeView(settingsBtn)
+                                            }
+                                        } catch (e: Exception) {}
+                                    }
+                                },
+                                modifier = Modifier.fillMaxSize()
+                            )
+                        } else {
+                            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                        }
+
+                        if (!isPip) {
+                            Row(
+                                modifier = Modifier
+                                    .align(Alignment.TopStart)
+                                    .padding(16.dp),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Button(
+                                    onClick = { finish() },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black.copy(alpha = 0.6f))
+                                ) {
+                                    Text("返回", color = Color.White)
                                 }
-                            },
-                            modifier = Modifier.fillMaxSize()
-                        )
+                                Button(
+                                    onClick = { enterPipManually() },
+                                    colors = ButtonDefaults.buttonColors(containerColor = Color.Black.copy(alpha = 0.6f))
+                                ) {
+                                    Text("开启小窗", color = Color.White)
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
     }
 
-    private fun triggerPip() {
+    private fun enterPipManually() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            try {
+                val params = PictureInPictureParams.Builder()
+                    .setAspectRatio(Rational(16, 9))
+                    .build()
+                val success = enterPictureInPictureMode(params)
+                if (!success) {
+                    Toast.makeText(this, "小窗失败，请检查手机【设置-应用-画中画】权限是否开启！", Toast.LENGTH_LONG).show()
+                }
+            } catch (e: Exception) {
+                Toast.makeText(this, "小窗失败: ${e.message}", Toast.LENGTH_LONG).show()
+                e.printStackTrace()
+            }
+        } else {
+            Toast.makeText(this, "系统版本过低，不支持画中画", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    override fun onUserLeaveHint() {
+        super.onUserLeaveHint()
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             try {
                 val params = PictureInPictureParams.Builder()
                     .setAspectRatio(Rational(16, 9))
                     .build()
                 enterPictureInPictureMode(params)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            } catch (e: Exception) {}
         }
-    }
-
-    override fun onUserLeaveHint() {
-        super.onUserLeaveHint()
-        triggerPip()
     }
 
     override fun onPictureInPictureModeChanged(isInPictureInPictureMode: Boolean, newConfig: Configuration) {
         super.onPictureInPictureModeChanged(isInPictureInPictureMode, newConfig)
+        isInPipModeState.value = isInPictureInPictureMode
         playerView?.useController = !isInPictureInPictureMode
-    }
-
-    override fun onPause() {
-        super.onPause()
-        // If not finishing, it means we are pushed to background (e.g. recent apps or home gesture)
-        // If PiP hasn't been triggered yet (autoEnterEnabled might fail on some skins), force it.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && !isInPictureInPictureMode && !isFinishing) {
-            triggerPip()
-        }
     }
 
     override fun onDestroy() {
